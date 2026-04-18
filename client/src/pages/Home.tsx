@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Mail, MapPin, Phone, ShoppingCart } from "lucide-react";
+import { useInternationalization } from "@/contexts/InternationalizationContext";
+import InternationalizationSelector from "@/components/InternationalizationSelector";
 
 /**
  * Star Himalayan Pink Salt - Home Page
@@ -9,18 +11,21 @@ import { Mail, MapPin, Phone, ShoppingCart } from "lucide-react";
  * - Generous whitespace and elegant typography
  * - Playfair Display for headings, Inter for body
  * - Asymmetric layout with premium feel
+ * - International multi-currency support
  */
 
 const playfairStyle = { fontFamily: "'Playfair Display', serif" };
 
 export default function Home() {
+  const { convertPrice } = useInternationalization();
+
   const products = [
     {
       id: 1,
       name: "Coarse Pink Salt",
       description: "100% natural and unrefined Himalayan pink salt crystals",
       size: "1kg",
-      price: "PKR 1,200",
+      pricePKR: 1200,
       image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663538305020/bozBD9y2ZPhUTVYKbBXsGT/hero-salt-luxury-bXSWQHCsFk9sDF58Sij2C8.webp",
     },
     {
@@ -28,7 +33,7 @@ export default function Home() {
       name: "Fine Table Salt",
       description: "Granulated and fine mix for perfect seasoning",
       size: "500g",
-      price: "PKR 800",
+      pricePKR: 800,
       image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663538305020/bozBD9y2ZPhUTVYKbBXsGT/hero-salt-close-PXLL6AADCxrPbSreihxi2g.webp",
     },
     {
@@ -36,8 +41,17 @@ export default function Home() {
       name: "Himalayan Bath Salt",
       description: "Premium quality for wellness and spa use",
       size: "2kg",
-      price: "PKR 1,800",
+      pricePKR: 1800,
       image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663538305020/bozBD9y2ZPhUTVYKbBXsGT/hero-salt-lifestyle-VHy2aJHzJpwmRDGz6jZj.webp",
+    },
+    {
+      id: 4,
+      name: "The Pink Star Collection",
+      description: "Premium 100% natural Himalayan pink salt - The Pink Star Collection. Perfect for all culinary needs with 84+ essential minerals.",
+      size: "1kg",
+      pricePKR: 2500,
+      image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663538305020/bozBD9y2ZPhUTVYKbBXsGT/pink-star-collection-84CbVUw2NV8qRpsxo9s4oC.webp",
+      featured: true,
     },
   ];
 
@@ -54,19 +68,22 @@ export default function Home() {
               Star Himalayan Salt
             </h1>
           </div>
-          <div className="flex items-center gap-4">
-            <a
-              href="#products"
-              className="text-sm text-foreground/70 hover:text-accent transition-colors"
-            >
-              Products
-            </a>
-            <a
-              href="#contact"
-              className="text-sm text-foreground/70 hover:text-accent transition-colors"
-            >
-              Contact
-            </a>
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
+              <a
+                href="#products"
+                className="text-sm text-foreground/70 hover:text-accent transition-colors"
+              >
+                Products
+              </a>
+              <a
+                href="#contact"
+                className="text-sm text-foreground/70 hover:text-accent transition-colors"
+              >
+                Contact
+              </a>
+            </div>
+            <InternationalizationSelector />
           </div>
         </div>
       </nav>
@@ -86,6 +103,7 @@ export default function Home() {
               <p className="text-lg text-foreground/70 leading-relaxed max-w-md">
                 Sourced directly from the pristine Himalayan mountains. 100% natural,
                 unrefined, and packed with essential minerals for your health and wellness.
+                Now available worldwide with international shipping.
               </p>
             </div>
 
@@ -117,8 +135,8 @@ export default function Home() {
                 <p className="text-sm text-foreground/60">Minerals</p>
               </div>
               <div className="space-y-2">
-                <p className="text-2xl font-bold text-accent">Pure</p>
-                <p className="text-sm text-foreground/60">Unrefined</p>
+                <p className="text-2xl font-bold text-accent">Global</p>
+                <p className="text-sm text-foreground/60">Shipping</p>
               </div>
             </div>
           </div>
@@ -194,15 +212,23 @@ export default function Home() {
             <h3 style={playfairStyle} className="text-4xl font-bold text-foreground">
               Premium Salt Products
             </h3>
+            <p className="text-foreground/60 mt-4">Available worldwide with international shipping</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {products.map((product) => (
               <Card
                 key={product.id}
-                className="overflow-hidden bg-white border-border hover:shadow-xl transition-all duration-300"
+                className={`overflow-hidden bg-white border-border hover:shadow-xl transition-all duration-300 ${
+                  product.featured ? "lg:col-span-2 lg:row-span-2" : ""
+                }`}
               >
                 <div className="relative h-64 overflow-hidden bg-secondary">
+                  {product.featured && (
+                    <div className="absolute top-4 right-4 bg-accent text-white px-3 py-1 rounded-full text-xs font-bold">
+                      Featured
+                    </div>
+                  )}
                   <img
                     src={product.image}
                     alt={product.name}
@@ -230,7 +256,9 @@ export default function Home() {
                       <p className="text-xs text-foreground/50 uppercase tracking-wider">
                         Price
                       </p>
-                      <p className="font-bold text-accent text-lg">{product.price}</p>
+                      <p className="font-bold text-accent text-lg">
+                        {convertPrice(product.pricePKR)}
+                      </p>
                     </div>
                   </div>
 
@@ -259,7 +287,7 @@ export default function Home() {
             </h3>
             <p className="text-foreground/70 mt-4 max-w-2xl mx-auto">
               Have questions about our products? We're here to help. Reach out through
-              WhatsApp or visit us in Peshawar.
+              WhatsApp or visit us in Peshawar. We ship internationally!
             </p>
           </div>
 
@@ -279,7 +307,7 @@ export default function Home() {
                 +92 331 8484115
               </a>
               <p className="text-sm text-foreground/60 mt-3">
-                Chat with us on WhatsApp for quick inquiries
+                Chat with us on WhatsApp for quick inquiries and orders
               </p>
             </Card>
 
@@ -314,7 +342,7 @@ export default function Home() {
                 Peshawar, Pakistan
               </p>
               <p className="text-sm text-foreground/60 mt-3">
-                Visit our showroom for product demonstrations
+                Visit our showroom or arrange international shipments
               </p>
             </Card>
           </div>
@@ -335,7 +363,8 @@ export default function Home() {
                 </h3>
               </div>
               <p className="text-white/70 text-sm">
-                Premium quality Himalayan pink salt sourced directly from the mountains.
+                Premium quality Himalayan pink salt sourced directly from the mountains. 
+                Now shipping internationally to customers worldwide.
               </p>
             </div>
 
@@ -355,6 +384,11 @@ export default function Home() {
                 <li>
                   <a href="#" className="hover:text-white transition-colors">
                     About Us
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Shipping Info
                   </a>
                 </li>
               </ul>
@@ -380,14 +414,15 @@ export default function Home() {
                   </a>
                 </li>
                 <li className="text-white/70">Peshawar, Pakistan</li>
+                <li className="text-white/70">International Shipping Available</li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-white/10 pt-8">
             <p className="text-center text-sm text-white/60">
-              © 2026 Star Himalayan Salt. All rights reserved. | Premium Quality Salt
-              Products
+              © 2026 Star Himalayan Salt. All rights reserved. | Premium Quality Salt Products | 
+              Available in PKR, USD, EUR, GBP, AUD
             </p>
           </div>
         </div>
